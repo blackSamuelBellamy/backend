@@ -1,4 +1,4 @@
-const {consultar, crearPerfil} = require('../services/indexServices')
+const { consultar, crearPerfil, perfilFreeCoder } = require('../services/indexServices')
 const write = require('../helper/post') // esto emula el post que será enviado del front
 
 
@@ -14,12 +14,22 @@ const indexController = {
     }
   },
 
-  crearPerfil:  async(req, res) => {
+  crearPerfil: async (req, res) => {
     try {
       await crearPerfil(write) // aquí debería ser crearPerfil(req.body.write)
       res.status(200)
 
-    } catch(e) {
+    } catch (e) {
+      console.log(e)
+    }
+  },
+
+  perfil: async (req, res) => {
+    try {
+      const { id } = req.params
+      const data = await perfilFreeCoder(id)
+      res.status(200).json(data)
+    } catch (e) {
       console.log(e.message)
     }
   }

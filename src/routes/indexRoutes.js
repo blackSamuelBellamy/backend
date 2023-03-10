@@ -4,6 +4,7 @@ const indexController = require('../controller/indexController')
 
 router.get('/', indexController.show)
 router.get('/home', indexController.show)
+router.get('/perfil/:id', indexController.perfil)
 router.post('/crearperfil', indexController.crearPerfil)
 /* 
 router.post('/login', indexController)
