@@ -11,7 +11,7 @@ const PORT = process.env.PORT || 3000
 app.use(cors())
 app.use(express.json({ limit: '25mb' }))
 app.use(express.static('public'))
-app.use((req, res, next) => {
+app.use((_, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*')
     next()
 })

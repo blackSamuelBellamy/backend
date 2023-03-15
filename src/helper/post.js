@@ -1,11 +1,11 @@
 const write = {  // este objeto es algo parecido que tendríamos que recibir en el front
     personalInformation: { // informacion personal
-        nombre: "Esteban",
+        nombre: "david",
         apellido: "herrera",
         clave: "sdas34121",
         foto_url: "https://goo.su/yt64A",
         edad: 45,
-        email: "test1@outlook.es",
+        email: "alejandro.quinones@outlok.es",
         area: "FullStack",
         repositorio_url: "https://portafolio-glr.vercel.app/",
         linkedin: "https://goo.su/mFiM",

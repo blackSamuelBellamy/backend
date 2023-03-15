@@ -1,27 +1,36 @@
 const bcrypt = require('bcryptjs')
 const pool = require('../dataBase/conexion')
-const filteringData = require('../helper/filter')
 const nodemailer = require('../helper/nodeMailer/nodeMailer')
 const bienvenida = require('../helper/nodeMailer/bienvenidaCoder')
+const solicitudCreada = require('../helper/nodeMailer/solicitudCreada')
+const solicitudProgramador = require('../helper/nodeMailer/solicitudProgramador')
+const propuestaCliente = require('../helper/nodeMailer/propuestaCliente')
+const propuestaCoder = require('../helper/nodeMailer/propuestaCoder')
 
-const consultar = async () => {
-    const { rows: coders } = await pool.query('SELECT * FROM programadores;')
-    const { rows: lenguajes } = await pool.query('SELECT * FROM lenguajes;')
-    const { rows: basedatos } = await pool.query('SELECT * FROM basedatos;')
-    const { rows: frameworks } = await pool.query('SELECT * FROM frameworks;')
-    const programadores = filteringData(coders)
-    return { programadores, lenguajes, basedatos, frameworks }
+const consultar = async () => { // services testeado
+    const command =
+       `SELECT p.id, p.nombre, p.apellido, p.foto_url, p.area, p.repositorio_url, p.resenha, p.portafolio, p.presupuesto, p.oferta_valor, p.valor_hora,
+       (SELECT array_agg(l.nombre) FROM programador_lenguaje pl LEFT JOIN lenguajes l ON pl.lenguajes_id = l.id WHERE pl.programador_id = p.id) AS lenguajes,
+       (SELECT array_agg(b.nombre) FROM programador_basedatos pb LEFT JOIN basedatos b ON pb.basedatos_id = b.id WHERE pb.programador_id = p.id) AS basedatos,
+       (SELECT array_agg(f.nombre) FROM framework_lenguaje fl LEFT JOIN frameworks f ON fl.framework_id = f.id WHERE fl.programador_id = p.id ) AS frameworks
+       FROM programadores p`
+
+    const { rows: main } = await pool.query(command)
+    const { rows: total_lenguajes } = await pool.query('SELECT * FROM lenguajes;')
+    const { rows: total_basedatos } = await pool.query('SELECT * FROM basedatos;')
+    const { rows: total_frameworks } = await pool.query('SELECT * FROM frameworks;')
+    const mainData = [main, total_lenguajes, total_basedatos, total_frameworks]
+    return mainData
 }
 
 
-const crearPerfil = async obj => {
+const crearPerfil = async obj => { // services testeado
     const personalInfo = Object.values(obj.personalInformation)
     personalInfo[2] = bcrypt.hashSync(personalInfo[2])
-    const parameters = personalInfo.map((x, index) => `$${index + 1}`).join(', ')
-    const programmersCommand = `INSERT INTO programadores VALUES(DEFAULT, ${parameters}) RETURNING *;`
-    const programmersValues = personalInfo.map(x => x)
-    const { rows: result } = await pool.query(programmersCommand, programmersValues)
-    const {id, email, nombre}= result[0]
+    const programmersCommand =
+        'INSERT INTO programadores VALUES(DEFAULT, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) RETURNING *;'
+    const { rows: result } = await pool.query(programmersCommand, personalInfo)
+    const { id, email, nombre } = result[0]
     await nodemailer(bienvenida(email, nombre))
 
     const skills = async (main_table, create_table, id) => {
@@ -35,12 +44,12 @@ const crearPerfil = async obj => {
     }
     await skills('lenguajes', 'programador_lenguaje', id)
     await skills('frameworks', 'framework_lenguaje', id)
-    await skills('basedatos', 'programador_basedatos', id) 
+    await skills('basedatos', 'programador_basedatos', id)
 }
 
-const perfilFreeCoder = async id => {
+const perfilFreeCoder = async id => { // services testeado
     const command =
-    `SELECT p.id, p.nombre, p.apellido, p.foto_url, p.area, p.repositorio_url, p.resenha, p.portafolio, p.presupuesto, p.oferta_valor, p.valor_hora,
+        `SELECT p.id, p.nombre, p.apellido, p.foto_url, p.area, p.repositorio_url, p.resenha, p.portafolio, p.presupuesto, p.oferta_valor, p.valor_hora,
     (SELECT array_agg(l.nombre) FROM programador_lenguaje pl LEFT JOIN lenguajes l ON pl.lenguajes_id = l.id WHERE pl.programador_id = p.id) AS lenguajes,
     (SELECT array_agg(b.nombre) FROM programador_basedatos pb LEFT JOIN basedatos b ON pb.basedatos_id = b.id WHERE pb.programador_id = p.id) AS basedatos,
     (SELECT array_agg(f.nombre) FROM framework_lenguaje fl LEFT JOIN frameworks f ON fl.framework_id = f.id WHERE fl.programador_id = p.id ) AS frameworks
@@ -51,4 +60,126 @@ const perfilFreeCoder = async id => {
     return data
 }
 
-module.exports = { consultar, crearPerfil, perfilFreeCoder }
+const contactarCoder = async obj => { //services testeado, algo ocurre con nodemailer
+    const values = Object.values(obj[0])
+    const command =
+        'INSERT INTO solicitudes VALUES (DEFAULT, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, DEFAULT) RETURNING *'
+    const { rows: result } = await pool.query(command, values)
+    const { nombre_cliente, apellido, email: email_cliente, id: id_solicitud, programador_id } = result[0]
+    const clientCommand = 'INSERT INTO clientes (nombre, apellido, email) VALUES ($1, $2, $3);'
+    const clientValues = [nombre_cliente, apellido, email_cliente]
+    const { rows: datos, rowCount } = await pool.query('SELECT * FROM clientes')
+    if (rowCount > 0) {
+        const result = datos.find(x => x.email === email_cliente)
+        if (result === undefined) {
+            await pool.query(clientCommand, clientValues)
+        }
+    } else {
+        await pool.query(clientCommand, clientValues)
+    }
+
+    const programadorID = [programador_id]
+    const command_programador = 'SELECT * FROM programadores WHERE id = $1'
+    const { rows: data } = await pool.query(command_programador, programadorID)
+    const { nombre: programador_nombre, email: email_programador } = data[0]
+    await nodemailer(solicitudCreada(email_cliente, nombre_cliente, id_solicitud))
+    setTimeout(() => nodemailer(solicitudProgramador(email_programador, programador_nombre, id_solicitud)), 10000)
+    return id_solicitud
+}
+
+const confirmarOrden = async id => { // services testeado
+    const valueSolicitud = [id]
+    const commandSolicitud = 'SELECT * FROM solicitudes WHERE id = $1;'
+    const { rows: result } = await pool.query(commandSolicitud, valueSolicitud)
+    const { id: solicitud_id, stack_1, stack_2, stack_3, stack_otros, programador_id } = result[0]
+    const command = 'SELECT * FROM programadores WHERE id = $1'
+    const value = [programador_id]
+    const { rows: data } = await pool.query(command, value)
+    const { nombre, apellido } = data[0]
+    const res = { nombre, apellido, stack_1, stack_2, stack_3, stack_otros, solicitud_id }
+    return res
+}
+
+
+const login = async (email, password) => { // services ok
+    const command = 'SELECT * FROM programadores WHERE email = $1'
+    const value = [email]
+    const { rowCount, rows: data } = await pool.query(command, value)
+    if (!rowCount) throw { code: 404, message: 'No existe este usuario' }
+    const { clave: password_encriptada } = data[0]
+    const passwordEsCorrecta = bcrypt.compareSync(password, password_encriptada)
+    if (!passwordEsCorrecta) throw { code: 404, message: 'Contraseña incorrecta' }
+}
+
+const getCrearPropuesta = async id => { // services ok
+    const coderCommand = 'SELECT * FROM programadores WHERE id = $1'
+    const valueID = [id]
+    const { rows: data } = await pool.query(coderCommand, valueID)
+    const { nombre, apellido } = data[0]
+    const solicitudesCommand = 'SELECT * FROM solicitudes WHERE programador_id = $1 ORDER BY fecha_solicitud DESC LIMIT 1'
+    const { rows: solicitud } = await pool.query(solicitudesCommand, valueID)
+    const { id: solicitud_id, titulo_proyecto, descripcion_proyecto, stack_1, stack_2, stack_3, stack_otros, boceto } = solicitud[0]
+    return { nombre, apellido, titulo_proyecto, descripcion_proyecto, stack_1, stack_2, stack_3, stack_otros, boceto, solicitud_id }
+}
+
+const postCrearPropuesta = async (id, obj) => {
+    const values = Object.values(obj[0])
+    values.unshift(id)
+    const command =
+    'INSERT INTO propuesta_coder VALUES (DEFAULT, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *'
+    const {rows: result} = await pool.query(command, values)
+    const { solicitud_id, id: propuesta_coderID } = result[0]
+    const solicitudCommand = 'SELECT * FROM solicitudes WHERE id = $1'
+    const valueSolicitud = [solicitud_id]
+    const { rows: data } = await pool.query(solicitudCommand, valueSolicitud)
+    const { email: email_cliente, nombre: nombre_cliente, programador_id } = data[0]
+    const programador_command = 'SELECT * FROM programadores WHERE id = $1'
+    const programador_value = [programador_id]
+    const { rows: programador_data } = await pool.query(programador_command, programador_value)
+    const { nombre: programador_nombre, email: programador_email } = programador_data[0]
+    await (nodemailer(propuestaCliente(email_cliente, nombre_cliente, propuesta_coderID)))
+    setTimeout(() => nodemailer(propuestaCoder(programador_email, programador_nombre, propuesta_coderID)), 10000) 
+}
+
+const seguimiento = async id => { // services testeado
+    const command = 'SELECT * FROM solicitudes WHERE id = $1'
+    const value = [id]
+    const { rows } = await pool.query(command, value)
+    if (rows.length === 0) throw ({ code: 404, message: 'No existe esta solicitud' })
+}
+
+const misSolicitudes = async mail => { // services testeado
+    const command = 'SELECT * FROM programadores WHERE email = $1'
+    const value = [mail]
+    const { rows: data } = await pool.query(command, value)
+    const { id, nombre, apellido } = data[0]
+    const valueID = [id]
+    const commandSolicitudes = 'SELECT * FROM solicitudes WHERE programador_id = $1 ORDER BY fecha_solicitud DESC'
+    const { rows: solicitudes } = await pool.query(commandSolicitudes, valueID)
+    return { nombre, apellido, solicitudes } 
+}
+
+
+const envioPropuesta = async id => {
+    const commandPropuesta = 'SELECT * FROM propuesta_coder WHERE id = $1'
+    const valuePropuesta = [id]
+    const {rows: data_propuesta} = await pool.query(commandPropuesta, valuePropuesta)
+    const {solicitud_id} = data_propuesta[0]
+    const commandSolicitud = 'SELECT * FROM solicitudes WHERE id = $1'
+    const valueSolicitud = [solicitud_id]
+    const {rows: data_solicitud} = await pool.query(commandSolicitud, valueSolicitud)
+    const {nombre_cliente, apellido_cliente, programador_id} = data_solicitud[0]
+    const commandProgramador = 'SELECT * FROM programadores WHERE id = $1'
+    const valueProgramador = [programador_id]
+    const { rows: programador } = await pool.query(commandProgramador, valueProgramador)
+    const { nombre: nombre_coder, apellido: apellido_coder} = programador[0]
+    const result = [{cliente: [nombre_cliente, apellido_cliente]}, 
+            {programador: [nombre_coder, apellido_coder]}, data_propuesta] 
+    return result
+}
+
+module.exports = {
+    consultar, crearPerfil, perfilFreeCoder,
+    contactarCoder, confirmarOrden, login, getCrearPropuesta, postCrearPropuesta, seguimiento, misSolicitudes,
+    envioPropuesta
+}

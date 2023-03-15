@@ -1,0 +1,291 @@
+{
+	"info": {
+		"_postman_id": "debf22b1-4477-4129-90e6-0548b426bdc6",
+		"name": "freecoders",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "http://localhost:3600/crearperfil",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n   \"personalInformation\": { \r\n        \"nombre\": \"Alejandro\",\r\n        \"apellido\": \"Quiñones\",\r\n        \"clave\": \"sdas34121\",\r\n        \"foto_url\": \"https://www.themoviedb.org/t/p/w500/lldeQ91GwIVff43JBrpdbAAeYWj.jpg\",\r\n        \"edad\": 35,\r\n        \"email\": \"alejandro@freecoders.com\",\r\n        \"area\": \"FullStack\",\r\n        \"repositorio_url\": \"https://github.com/blackSamuelBellamy\",\r\n        \"linkedin\": \"https://www.linkedin.com/in/alejandro-quinones-arenas/\",\r\n        \"resenha\": \"Diseño funcional, programación front y backend\",\r\n        \"telefono\": 56992382055,\r\n        \"porfatolio\": \"Landing pages y páginas de Ecommerce\",\r\n        \"presupuesto\": 100000,\r\n        \"oferta_valor\": \"Especial atención en el diseño de aplicaciones con foco en la experiencia del usuario\",\r\n        \"valor_hora\": \"20000\"\r\n    },\r\n   \"frameworks\": [ \"React\", \"Angular\"],\r\n   \"basedatos\": [\"PostgreSQL\", \"MongoDB\"],\r\n   \"lenguajes\": [\"JavaScript\", \"Python\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3600/crearperfil",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3600",
+					"path": [
+						"crearperfil"
+					]
+				},
+				"description": "Este es el formato que se ingresaría en el front para agregar programadores a la base de datos"
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:3600/contactarfreecoder",
+			"request": {
+				"auth": {
+					"type": "bearer"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[\r\n    {\r\n    \"nombre_cliente\": \"Fernando\",\r\n    \"apellido\": \"Atria\",\r\n    \"email\": \"alejandro.quinones1987@gmail.com\",\r\n    \"titulo_proyecto\": \"Prueba numero 1\",\r\n    \"descripcion_proyecto\": \"Esta es la primera prueba\",\r\n    \"stack_1\": \"JavaScript\",\r\n    \"stack_2\": \"MongoDB\",\r\n    \"stack_3\": \"React\",\r\n    \"stack_otros\": \"Bootstrap\",\r\n    \"boceto\": \"es un boceto\",\r\n    \"presupuesto\": 20000,\r\n    \"programador_id\": 4\r\n}\r\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3600/contactarfreecoder",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3600",
+					"path": [
+						"contactarfreecoder"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:3600/confirmarorden/4",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiaWF0IjoxNjc4ODM0ODQ4LCJleHAiOjE2Nzg4Mzg0NDh9.3W5Kha863BX7I9SEyeZFHKySRFMknJdvbGMo5cEovL0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3600/confirmarorden/4",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3600",
+					"path": [
+						"confirmarorden",
+						"4"
+					]
+				},
+				"description": "esta es una vista pública que se valida por un token"
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:3600/login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "\r\n    {\r\n        \"email\": \"alejandro@freecoders.com\",\r\n        \"password\": \"sdas34121\" \r\n    }\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3600/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3600",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:3600/crearpropuesta/4",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFsZWphbmRyby5xdWlub25lc0BvdXRsb29rLmVzIiwiaWF0IjoxNjc4ODM0ODkxLCJleHAiOjE2Nzg4Mzg0OTF9.V6G9DBtzlN7CUxhNDc-MjDHrh_LpqD1WMmN8cjWRzCc",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:3600/crearpropuesta/4",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3600",
+					"path": [
+						"crearpropuesta",
+						"4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:3600/crearpropuesta/4",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFsZWphbmRyby5xdWlub25lc0BvdXRsb29rLmVzIiwiaWF0IjoxNjc4ODM0ODkxLCJleHAiOjE2Nzg4Mzg0OTF9.V6G9DBtzlN7CUxhNDc-MjDHrh_LpqD1WMmN8cjWRzCc",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[{\r\n    \"titulo_propuesta\": \"prueba titulo\",\r\n    \"descripcion_propuesta\": \"prueba descripcion\",\r\n    \"stack_1\": \"prueba stack1\",\r\n    \"stack_2\": \"prueba_stack2\",\r\n    \"stack_3\": \"prueba_stack3\",\r\n    \"stack_otros\": \"prueba_stack_otros\",\r\n    \"alcance\": \"prueba_alcance\",\r\n    \"cantidad_revisiones\": 2,\r\n    \"horas_estimadas\": 3,\r\n    \"valor_final\": 10000\r\n}]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3600/crearpropuesta/4",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3600",
+					"path": [
+						"crearpropuesta",
+						"4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:3600/seguimiento",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[{\r\n    \"id\": 4\r\n}]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3600/seguimiento",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3600",
+					"path": [
+						"seguimiento"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:3600/missolicitudes",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFsZWphbmRyby5xdWlub25lc0BvdXRsb29rLmVzIiwiaWF0IjoxNjc4ODM0ODkxLCJleHAiOjE2Nzg4Mzg0OTF9.V6G9DBtzlN7CUxhNDc-MjDHrh_LpqD1WMmN8cjWRzCc",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3600/missolicitudes",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3600",
+					"path": [
+						"missolicitudes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:3600/enviopropuesta/4",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3600/enviopropuesta/4",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3600",
+					"path": [
+						"enviopropuesta",
+						"4"
+					]
+				},
+				"description": "el id se pasa en el front por params"
+			},
+			"response": []
+		}
+	]
+}
