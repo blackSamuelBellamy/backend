@@ -7,7 +7,7 @@ const solicitudProgramador = require('../helper/nodeMailer/solicitudProgramador'
 const propuestaCliente = require('../helper/nodeMailer/propuestaCliente')
 const propuestaCoder = require('../helper/nodeMailer/propuestaCoder')
 
-const consultar = async () => { // services testeado
+const consultar = async () => { 
     const command =
        `SELECT p.id, p.nombre, p.apellido, p.foto_url, p.area, p.repositorio_url, p.resenha, p.portafolio, p.presupuesto, p.oferta_valor, p.valor_hora,
        (SELECT array_agg(l.nombre) FROM programador_lenguaje pl LEFT JOIN lenguajes l ON pl.lenguajes_id = l.id WHERE pl.programador_id = p.id) AS lenguajes,
@@ -24,7 +24,7 @@ const consultar = async () => { // services testeado
 }
 
 
-const crearPerfil = async obj => { // services testeado
+const crearPerfil = async obj => { 
     const personalInfo = Object.values(obj.personalInformation)
     personalInfo[2] = bcrypt.hashSync(personalInfo[2])
     const programmersCommand =
@@ -47,7 +47,7 @@ const crearPerfil = async obj => { // services testeado
     await skills('basedatos', 'programador_basedatos', id)
 }
 
-const perfilFreeCoder = async id => { // services testeado
+const perfilFreeCoder = async id => {
     const command =
         `SELECT p.id, p.nombre, p.apellido, p.foto_url, p.area, p.repositorio_url, p.resenha, p.portafolio, p.presupuesto, p.oferta_valor, p.valor_hora,
     (SELECT array_agg(l.nombre) FROM programador_lenguaje pl LEFT JOIN lenguajes l ON pl.lenguajes_id = l.id WHERE pl.programador_id = p.id) AS lenguajes,
@@ -60,7 +60,7 @@ const perfilFreeCoder = async id => { // services testeado
     return data
 }
 
-const contactarCoder = async obj => { //services testeado, algo ocurre con nodemailer
+const contactarCoder = async obj => { 
     const values = Object.values(obj[0])
     const command =
         'INSERT INTO solicitudes VALUES (DEFAULT, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, DEFAULT) RETURNING *'
@@ -87,7 +87,7 @@ const contactarCoder = async obj => { //services testeado, algo ocurre con nodem
     return id_solicitud
 }
 
-const confirmarOrden = async id => { // services testeado
+const confirmarOrden = async id => {
     const valueSolicitud = [id]
     const commandSolicitud = 'SELECT * FROM solicitudes WHERE id = $1;'
     const { rows: result } = await pool.query(commandSolicitud, valueSolicitud)
@@ -101,7 +101,7 @@ const confirmarOrden = async id => { // services testeado
 }
 
 
-const login = async (email, password) => { // services ok
+const login = async (email, password) => { 
     const command = 'SELECT * FROM programadores WHERE email = $1'
     const value = [email]
     const { rowCount, rows: data } = await pool.query(command, value)
@@ -111,7 +111,7 @@ const login = async (email, password) => { // services ok
     if (!passwordEsCorrecta) throw { code: 404, message: 'Contraseña incorrecta' }
 }
 
-const getCrearPropuesta = async id => { // services ok
+const getCrearPropuesta = async id => {
     const coderCommand = 'SELECT * FROM programadores WHERE id = $1'
     const valueID = [id]
     const { rows: data } = await pool.query(coderCommand, valueID)
@@ -141,14 +141,14 @@ const postCrearPropuesta = async (id, obj) => {
     setTimeout(() => nodemailer(propuestaCoder(programador_email, programador_nombre, propuesta_coderID)), 10000) 
 }
 
-const seguimiento = async id => { // services testeado
+const seguimiento = async id => { 
     const command = 'SELECT * FROM solicitudes WHERE id = $1'
     const value = [id]
     const { rows } = await pool.query(command, value)
     if (rows.length === 0) throw ({ code: 404, message: 'No existe esta solicitud' })
 }
 
-const misSolicitudes = async mail => { // services testeado
+const misSolicitudes = async mail => {
     const command = 'SELECT * FROM programadores WHERE email = $1'
     const value = [mail]
     const { rows: data } = await pool.query(command, value)

@@ -1,3 +1,4 @@
+require('dotenv').config()
 const request = require('supertest')
 const pool = require('../dataBase/conexion')
 const app = require('../../app')
@@ -20,24 +21,24 @@ describe('Database connection', () =>{
     })  
 
     test('can connect to endpoint /home', async() => {
-        const result = await request(`http://localhost:3600`).get('/home')
+        const result = await request(process.env.API).get('/home')
         expect(result.status).toBe(200)
     })
 
     test('can connect to the endpoint /perfil/2', async() => {
-        const result = await request('http://localhost:3600').get('/perfil/1')
-        expect(result.status).toBe(200)
-        
-    })
-
-    test('can connect to the endpoint /perfil/2', async() => {
-        const result = await request('http://localhost:3600').get('/perfil/2')
+        const result = await request(process.env.API).get('/perfil/1')
         expect(result.status).toBe(200)
         
     })
 
     test('can connect to the endpoint /perfil/2', async() => {
-        const result = await request('http://localhost:3600').get('/perfil/3')
+        const result = await request(process.env.API).get('/perfil/2')
+        expect(result.status).toBe(200)
+        
+    })
+
+    test('can connect to the endpoint /perfil/2', async() => {
+        const result = await request(process.env.API).get('/perfil/3')
         expect(result.status).toBe(200)
         
     })
