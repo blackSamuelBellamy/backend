@@ -12,13 +12,17 @@ const opts = {
     resource_type: 'auto'
 }
 
-const nuevaImagen = image => {
-    return new Promise((resolve, reject) => {
-        cloudinary.uploader.upload(image, opts, (err, result) => {
-        if(result && result.secure_url) return resolve(result.secure_url)
-         return reject(err.message)   
-        })
-    })
-}
+const nuevaImagen = async (image) => {
+    try {
+      const result = await cloudinary.uploader.upload(image, opts);
+      if (result && result.secure_url) {
+        return result.secure_url;
+      } else {
+        throw new Error("No se pudo cargar la imagen");
+      }
+    } catch (err) {
+      throw new Error(err.message);
+    }
+  }
 
 module.exports = nuevaImagen

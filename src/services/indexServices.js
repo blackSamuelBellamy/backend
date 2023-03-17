@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs')
 const pool = require('../dataBase/conexion')
+const uploadImage = require('../helper/uploadImage')
 const nodemailer = require('../helper/nodeMailer/nodeMailer')
 const bienvenida = require('../helper/nodeMailer/bienvenidaCoder')
 const solicitudCreada = require('../helper/nodeMailer/solicitudCreada')
@@ -27,6 +28,7 @@ const consultar = async () => {
 const crearPerfil = async obj => { 
     const personalInfo = Object.values(obj.personalInformation)
     personalInfo[2] = bcrypt.hashSync(personalInfo[2])
+    personalInfo[3] =  await uploadImage(personalInfo[3])
     const programmersCommand =
         'INSERT INTO programadores VALUES(DEFAULT, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) RETURNING *;'
     const { rows: result } = await pool.query(programmersCommand, personalInfo)
