@@ -20,7 +20,7 @@ const indexController = {
     try {
       const { nombre } = req.body.personalInformation
       await crearPerfil(req.body) 
-      res.status(200).send(`Perfil ${nombre} creado ✌️`)
+      res.status(200).send(`Tu perfil ${nombre} se ha creado ✌️`)
 
     } catch (err) {
       res.send(err.message)

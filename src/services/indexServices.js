@@ -27,13 +27,17 @@ const consultar = async () => {
 
 const crearPerfil = async obj => { 
     const personalInfo = Object.values(obj.personalInformation)
+    const validationCommand = 'SELECT * FROM programadores WHERE email = $1'
+    const valueValidation = [personalInfo[5]]
+    const { rowCount } = await pool.query(validationCommand, valueValidation)
+    if(rowCount) throw new Error('Este correo electrónico ya está registrado')
     personalInfo[2] = bcrypt.hashSync(personalInfo[2])
     personalInfo[3] =  await uploadImage(personalInfo[3])
     const programmersCommand =
         'INSERT INTO programadores VALUES(DEFAULT, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) RETURNING *;'
     const { rows: result } = await pool.query(programmersCommand, personalInfo)
     const { id, email, nombre } = result[0]
-    await nodemailer(bienvenida(email, nombre))
+    //await nodemailer(bienvenida(email, nombre))
 
     const skills = async (main_table, create_table, id) => {
         const { rows: result } = await pool.query(`SELECT * FROM ${main_table}`)
@@ -107,10 +111,10 @@ const login = async (email, password) => {
     const command = 'SELECT * FROM programadores WHERE email = $1'
     const value = [email]
     const { rowCount, rows: data } = await pool.query(command, value)
-    if (!rowCount) throw { code: 404, message: 'No existe este usuario' }
+    if (!rowCount) throw new Error('No existe este usuario') 
     const { clave: password_encriptada } = data[0]
     const passwordEsCorrecta = bcrypt.compareSync(password, password_encriptada)
-    if (!passwordEsCorrecta) throw { code: 404, message: 'Contraseña incorrecta' }
+    if (!passwordEsCorrecta) throw new Error('Contraseña incorrecta')
 }
 
 const getCrearPropuesta = async id => {
