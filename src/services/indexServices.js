@@ -71,6 +71,7 @@ const contactarCoder = async obj => {
     const command =
         'INSERT INTO solicitudes VALUES (DEFAULT, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, DEFAULT) RETURNING *'
     const { rows: result } = await pool.query(command, values)
+    if(!result) throw new Error('Hubo un problema, intenta en un momento')
     const { nombre_cliente, apellido, email: email_cliente, id: id_solicitud, programador_id } = result[0]
     const clientCommand = 'INSERT INTO clientes (nombre, apellido, email) VALUES ($1, $2, $3);'
     const clientValues = [nombre_cliente, apellido, email_cliente]
