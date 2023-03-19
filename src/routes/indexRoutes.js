@@ -6,7 +6,7 @@ router.get('/', indexController.show)
 router.get('/home', indexController.show)
 router.get('/perfil/:id', indexController.perfil)
 router.post('/crearperfil', indexController.crearPerfil)
-router.post('/contactarfreecoder', indexController.solicitud)
+router.post('/contactarfreecoder/:id', indexController.solicitud)
 router.get('/confirmarorden/:id', indexController.confirmar) //id de la solicitud se debe redireccionar inmeadiatamente
 router.post('/login', indexController.logear)
 router.get('/crearpropuesta/:id', indexController.getCrear) //privada
