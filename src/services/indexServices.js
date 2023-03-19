@@ -88,8 +88,8 @@ const contactarCoder = async obj => {
     const command_programador = 'SELECT * FROM programadores WHERE id = $1'
     const { rows: data } = await pool.query(command_programador, programadorID)
     const { nombre: programador_nombre, email: email_programador } = data[0]
-    await nodemailer(solicitudCreada(email_cliente, nombre_cliente, id_solicitud))
-    setTimeout(() => nodemailer(solicitudProgramador(email_programador, programador_nombre, id_solicitud)), 10000)
+   // await nodemailer(solicitudCreada(email_cliente, nombre_cliente, id_solicitud))
+    //setTimeout(() => nodemailer(solicitudProgramador(email_programador, programador_nombre, id_solicitud)), 10000)
     return id_solicitud
 }
 
@@ -143,8 +143,8 @@ const postCrearPropuesta = async (id, obj) => {
     const programador_value = [programador_id]
     const { rows: programador_data } = await pool.query(programador_command, programador_value)
     const { nombre: programador_nombre, email: programador_email } = programador_data[0]
-    await (nodemailer(propuestaCliente(email_cliente, nombre_cliente, propuesta_coderID)))
-    setTimeout(() => nodemailer(propuestaCoder(programador_email, programador_nombre, propuesta_coderID)), 10000) 
+    //await (nodemailer(propuestaCliente(email_cliente, nombre_cliente, propuesta_coderID)))
+    //setTimeout(() => nodemailer(propuestaCoder(programador_email, programador_nombre, propuesta_coderID)), 10000) 
 }
 
 const seguimiento = async id => { 
