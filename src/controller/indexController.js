@@ -53,7 +53,7 @@ const indexController = {
       const Authorization = req.header('Authorization')
       const token = Authorization.split('Bearer ')[1]
       jwt.verify(token, process.env.TOKEN1)
-      const id = jwt.decode(token).id
+      const id = jwt.decode(token).id  
       const data = await confirmarOrden(id)
       res.status(200).send(data)
     } catch(err) {

@@ -119,14 +119,17 @@ const login = async (email, password) => {
 }
 
 const getCrearPropuesta = async id => {
-    const coderCommand = 'SELECT * FROM programadores WHERE id = $1'
+    const solicitudesCommand = 'SELECT * FROM solicitudes WHERE id = $1'
     const valueID = [id]
-    const { rows: data } = await pool.query(coderCommand, valueID)
-    const { nombre, apellido } = data[0]
-    const solicitudesCommand = 'SELECT * FROM solicitudes WHERE programador_id = $1 ORDER BY fecha_solicitud DESC LIMIT 1'
     const { rows: solicitud } = await pool.query(solicitudesCommand, valueID)
-    const { id: solicitud_id, titulo_proyecto, descripcion_proyecto, stack_1, stack_2, stack_3, stack_otros, boceto } = solicitud[0]
-    return { nombre, apellido, titulo_proyecto, descripcion_proyecto, stack_1, stack_2, stack_3, stack_otros, boceto, solicitud_id }
+    const { id: solicitud_id, titulo_proyecto, descripcion_proyecto, stack_1, stack_2, stack_3, stack_otros, boceto, programador_id } = solicitud[0]
+    const coderCommand = 'SELECT * FROM programadores WHERE id = $1'
+    const programadorID = [programador_id]
+    const { rows: data } = await pool.query(coderCommand, programadorID)
+    const { nombre, apellido } = data[0]
+    const result ={ nombre, apellido, titulo_proyecto, descripcion_proyecto, stack_1, stack_2, stack_3, stack_otros, boceto, solicitud_id }
+    console.log(result)
+    return result
 }
 
 const postCrearPropuesta = async (id, obj) => {
