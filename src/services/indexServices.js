@@ -127,8 +127,8 @@ const getCrearPropuesta = async id => {
     const programadorID = [programador_id]
     const { rows: data } = await pool.query(coderCommand, programadorID)
     const { nombre, apellido } = data[0]
-    const result ={ nombre, apellido, nombre_cliente, titulo_proyecto, descripcion_proyecto, stack_1, stack_2, stack_3, stack_otros, boceto, solicitud_id }
-    return result
+    const res ={ nombre, apellido, nombre_cliente, titulo_proyecto, descripcion_proyecto, stack_1, stack_2, stack_3, stack_otros, boceto, solicitud_id }
+    return res
 }
 
 const postCrearPropuesta = async (id, obj) => {
