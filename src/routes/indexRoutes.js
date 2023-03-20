@@ -13,7 +13,7 @@ router.get('/crearpropuesta/:id', indexController.getCrear) //privada
 router.post('/crearpropuesta/:id', indexController.postCrear)
 router.post('/seguimiento', indexController.seguir)
 router.get('/missolicitudes', indexController.solicitudes) // privada
-router.post('/enviopropuesta/:id', indexController.envioDePropuesta)
+router.get('/enviopropuesta/:id', indexController.envioDePropuesta)
 
 
 module.exports = router

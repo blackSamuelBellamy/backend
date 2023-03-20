@@ -122,13 +122,12 @@ const getCrearPropuesta = async id => {
     const solicitudesCommand = 'SELECT * FROM solicitudes WHERE id = $1'
     const valueID = [id]
     const { rows: solicitud } = await pool.query(solicitudesCommand, valueID)
-    const { id: solicitud_id, titulo_proyecto, descripcion_proyecto, stack_1, stack_2, stack_3, stack_otros, boceto, programador_id } = solicitud[0]
+    const { id: solicitud_id, titulo_proyecto, descripcion_proyecto, stack_1, stack_2, stack_3, stack_otros, boceto, programador_id, nombre_cliente } = solicitud[0]
     const coderCommand = 'SELECT * FROM programadores WHERE id = $1'
     const programadorID = [programador_id]
     const { rows: data } = await pool.query(coderCommand, programadorID)
     const { nombre, apellido } = data[0]
-    const result ={ nombre, apellido, titulo_proyecto, descripcion_proyecto, stack_1, stack_2, stack_3, stack_otros, boceto, solicitud_id }
-    console.log(result)
+    const result ={ nombre, apellido, nombre_cliente, titulo_proyecto, descripcion_proyecto, stack_1, stack_2, stack_3, stack_otros, boceto, solicitud_id }
     return result
 }
 
