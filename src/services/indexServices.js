@@ -181,9 +181,9 @@ const envioPropuesta = async id => {
     const commandProgramador = 'SELECT * FROM programadores WHERE id = $1'
     const valueProgramador = [programador_id]
     const { rows: programador } = await pool.query(commandProgramador, valueProgramador)
-    const { nombre: nombre_coder, apellido: apellido_coder} = programador[0]
+    const { nombre: nombre_coder, apellido: apellido_coder, foto_url} = programador[0]
     const result = [{cliente: [nombre_cliente, apellido_cliente]}, 
-            {programador: [nombre_coder, apellido_coder]}, data_propuesta] 
+            {programador: [nombre_coder, apellido_coder, foto_url]}, data_propuesta] 
     return result
 }
 
