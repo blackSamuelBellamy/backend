@@ -97,7 +97,7 @@ const indexController = {
 
   seguir: async(req, res) => {
     try {
-      const { id }= req.body[0]
+      const { id }= req.body
       console.log(id)
       await seguimiento(id)
       res.status(200).send('existe solicitud')
