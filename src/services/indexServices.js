@@ -98,12 +98,12 @@ const confirmarOrden = async id => {
     const valueSolicitud = [id]
     const commandSolicitud = 'SELECT * FROM solicitudes WHERE id = $1;'
     const { rows: result } = await pool.query(commandSolicitud, valueSolicitud)
-    const { id: solicitud_id, stack_1, stack_2, stack_3, stack_otros, programador_id } = result[0]
+    const {id: solicitud_id, stack_1, stack_2, stack_3, stack_otros, programador_id, nombre_cliente } = result[0]
     const command = 'SELECT * FROM programadores WHERE id = $1'
     const value = [programador_id]
-    const { rows: data } = await pool.query(command, value)
-    const { nombre, apellido } = data[0]
-    const res = { nombre, apellido, stack_1, stack_2, stack_3, stack_otros, solicitud_id }
+    const { rows } = await pool.query(command, value)
+    const { nombre, apellido, foto_url } = rows[0]
+    const res = { nombre, apellido, foto_url, stack_1, stack_2, stack_3, stack_otros, solicitud_id, nombre_cliente}
     return res
 }
 
@@ -156,7 +156,7 @@ const seguimiento = async id => {
 }
 
 const misSolicitudes = async mail => {
-    const command = 'SELECT * FROM programadores WHERE email = $1'
+    const command = `SELECT * FROM programadores WHERE email = $1`
     const value = [mail]
     const { rows: data } = await pool.query(command, value)
     const { id, nombre, apellido } = data[0]
